@@ -1,0 +1,72 @@
+version: "3.1"
+
+stories:
+
+# ===============================
+# ✅ POWER OUTAGE
+# ===============================
+- story: user reports power outage
+  steps:
+    - intent: report_power_outage
+    - action: action_check_terms_before_form
+    - action: power_outage_form
+    - active_loop: power_outage_form
+    - active_loop: null
+    - action: action_submit_power_outage_form
+    - action: action_show_carousel_extra
+
+# ===============================
+# ✅ METER CONCERN
+# ===============================
+- story: user checks meter concern
+  steps:
+    - intent: meter_concern
+    - action: action_check_terms_before_form
+    - action: meter_concern_form
+    - active_loop: meter_concern_form
+    - active_loop: null
+    - action: action_submit_meter_concern
+    - action: action_show_carousel_extra
+
+# ===============================
+# ✅ TALK TO AGENT
+# ===============================
+- story: user talks to agent
+  steps:
+    - intent: talk_to_agent
+    - action: action_check_terms_before_form
+    - action: talk_to_agent_form
+    - active_loop: talk_to_agent_form
+    - active_loop: null
+    - action: action_submit_talk_to_agent_form
+
+# ===============================
+# ✅ FOLLOW UPS
+# ===============================
+- story: user follows up report
+  steps:
+    - intent: follow_up_report
+    - action: action_check_terms_before_form
+    - action: follow_up_report_form
+    - active_loop: follow_up_report_form
+    - active_loop: null
+    - action: action_submit_follow_up_report_form
+    - action: action_show_carousel_extra
+
+- story: user checks meter followup
+  steps:
+    - intent: meter_concern_followup
+    - action: action_check_terms_before_form
+    - action: meter_concern_followup_form
+    - active_loop: meter_concern_followup_form
+    - active_loop: null
+    - action: action_submit_meter_concern_followup
+    - action: action_show_carousel_extra
+
+# ===============================
+# ✅ AGENT RESUME CONVERSATION (NEW)
+# ===============================
+- story: agent serves customer and conversation resumes
+  steps:
+    - intent: resume_conversation
+    - action: action_resume_conversation
