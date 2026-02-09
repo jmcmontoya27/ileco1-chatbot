@@ -3,4 +3,4 @@ action_endpoint:
 
 tracker_store:
   type: sql
-  url: "${DATABASE_URL}"
+  url: "${DATABASE_URL}" 
