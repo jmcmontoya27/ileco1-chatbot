@@ -3,9 +3,5 @@ action_endpoint:
 
 tracker_store:
   type: sql
-  dialect: postgresql
-  host: ${RASA_DB_HOST}
-  port: ${RASA_DB_PORT}
-  username: ${RASA_DB_USER}
-  password: ${RASA_DB_PASSWORD}
-  db: ${RASA_DB_NAME}
+  dialect: "postgresql"
+  url: "postgresql://${RASA_DB_USER}:${RASA_DB_PASSWORD}@${RASA_DB_HOST}:${RASA_DB_PORT}/${RASA_DB_NAME}"
