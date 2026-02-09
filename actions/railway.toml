@@ -1,0 +1,15 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "python -m rasa_sdk --actions actions --port 5055"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+```
+
+### Option 2: Create `Procfile`
+
+Alternatively, in the `actions` folder, create a file called `Procfile` (no extension):
+```
+web: python -m rasa_sdk --actions actions --port 5055
