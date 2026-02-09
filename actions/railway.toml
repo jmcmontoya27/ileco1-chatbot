@@ -3,6 +3,5 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "python -m rasa_sdk --actions actions --port ${PORT:-5055}"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
