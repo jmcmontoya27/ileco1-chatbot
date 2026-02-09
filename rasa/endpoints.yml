@@ -3,4 +3,4 @@ action_endpoint:
 
 tracker_store:
   type: sql
-  url: "postgresql://${RASA_DB_USER}:${RASA_DB_PASSWORD}@${RASA_DB_HOST}:${RASA_DB_PORT}/${RASA_DB_NAME}"
+  url: "${DATABASE_URL}"
