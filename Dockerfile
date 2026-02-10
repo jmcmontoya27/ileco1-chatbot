@@ -15,9 +15,9 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements first (better caching)
 COPY requirements.txt .
 
-# CRITICAL FIX: Install PyYAML with prebuilt wheel BEFORE Rasa
-# This prevents pip from trying to build PyYAML 5.4.1 from source
-RUN pip install --no-cache-dir "pyyaml>=5.4,<6.0" --prefer-binary
+# CRITICAL FIX: Install PyYAML 6.0.1 (has prebuilt wheels for Python 3.10)
+# Then downgrade to compatible version after Rasa installs
+RUN pip install --no-cache-dir PyYAML==6.0.1
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
