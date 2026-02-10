@@ -18,16 +18,14 @@ RUN apt-get update && apt-get install -y \
     gettext-base \
     && rm -rf /var/lib/apt/lists/*
 
-# CRITICAL: Install EXACT versions that work together
-# Do NOT use --upgrade on setuptools or it will install v82!
-RUN pip install --upgrade pip && \
-    pip install "setuptools==69.5.1" "wheel<1.0" "Cython<3.0"
+# Upgrade pip only
+RUN pip install --upgrade pip
 
 # Copy requirements
 COPY requirements.txt .
 
-# Install dependencies with legacy resolver
-RUN pip install --no-cache-dir --use-deprecated=legacy-resolver -r requirements.txt
+# Let pip resolve all dependencies automatically
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application files
 COPY . .
