@@ -24,9 +24,8 @@ wheels/
 .installed.cfg
 *.egg
 
-# Rasa
-models/
-*.tar.gz
+# Rasa - keep models, ignore cache
+models/.training_cache
 results/
 .rasa/
 

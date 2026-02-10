@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
@@ -19,6 +19,17 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy all application files
 COPY . .
+
+# Train model only if models directory is empty (fallback)
+RUN if [ ! "$(ls -A models 2>/dev/null)" ]; then \
+        echo "No model found, training new model..."; \
+        rasa train --domain rasa/domain.yml \
+                    --config rasa/config.yml \
+                    --data rasa/data \
+                    --out models; \
+    else \
+        echo "Using existing model from models/"; \
+    fi
 
 # Make start.sh executable
 RUN chmod +x start.sh
