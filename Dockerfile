@@ -15,11 +15,10 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements first (better caching)
 COPY requirements.txt .
 
-# CRITICAL FIX: Install PyYAML 6.0.1 (has prebuilt wheels for Python 3.10)
-# Then downgrade to compatible version after Rasa installs
+# Install PyYAML first with prebuilt wheel
 RUN pip install --no-cache-dir PyYAML==6.0.1
 
-# Install Python dependencies
+# Install remaining Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy all application files
