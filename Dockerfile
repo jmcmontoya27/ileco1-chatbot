@@ -2,7 +2,7 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Set environment variables for reproducible builds
+# Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
@@ -18,18 +18,15 @@ RUN apt-get update && apt-get install -y \
     gettext-base \
     && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip and install build dependencies FIRST
-RUN pip install --upgrade pip setuptools wheel
-
-# Install Cython BEFORE PyYAML (needed to build PyYAML 5.4.1 from source)
-RUN pip install --no-cache-dir "Cython<3.0"
+# CRITICAL FIX: Upgrade pip but pin setuptools to version compatible with PyYAML 5.4.1
+RUN pip install --upgrade pip && \
+    pip install "setuptools<70" wheel "Cython<3.0"
 
 # Copy requirements
 COPY requirements.txt .
 
-# Install PyYAML with Cython available, then rest of dependencies
-RUN pip install --no-cache-dir PyYAML==5.4.1 && \
-    pip install --no-cache-dir -r requirements.txt
+# Install dependencies with legacy resolver to avoid conflicts
+RUN pip install --no-cache-dir --use-deprecated=legacy-resolver -r requirements.txt
 
 # Copy application files
 COPY . .
