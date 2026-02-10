@@ -18,14 +18,15 @@ RUN apt-get update && apt-get install -y \
     gettext-base \
     && rm -rf /var/lib/apt/lists/*
 
-# CRITICAL FIX: Upgrade pip but pin setuptools to version compatible with PyYAML 5.4.1
+# CRITICAL: Install EXACT versions that work together
+# Do NOT use --upgrade on setuptools or it will install v82!
 RUN pip install --upgrade pip && \
-    pip install "setuptools<70" wheel "Cython<3.0"
+    pip install "setuptools==69.5.1" "wheel<1.0" "Cython<3.0"
 
 # Copy requirements
 COPY requirements.txt .
 
-# Install dependencies with legacy resolver to avoid conflicts
+# Install dependencies with legacy resolver
 RUN pip install --no-cache-dir --use-deprecated=legacy-resolver -r requirements.txt
 
 # Copy application files
