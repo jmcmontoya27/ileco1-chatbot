@@ -16,6 +16,10 @@ echo "Working Directory: $(pwd)"
 echo "Files in current directory:"
 ls -la
 
+# Substitute DATABASE_URL in endpoints.yml
+echo "Substituting environment variables in endpoints.yml..."
+envsubst < rasa/endpoints.yml > rasa/endpoints_processed.yml
+
 # Start Rasa Actions Server in background
 echo "Starting Rasa Actions Server on port $ACTION_PORT..."
 python -m rasa_sdk --actions actions.actions --port $ACTION_PORT &
@@ -24,10 +28,10 @@ python -m rasa_sdk --actions actions.actions --port $ACTION_PORT &
 echo "Waiting for actions server to initialize..."
 sleep 5
 
-# Start main Rasa server
+# Start main Rasa server with processed endpoints
 echo "Starting Rasa Server on port $PORT..."
 rasa run --port $PORT \
     --enable-api \
     --cors "*" \
-    --endpoints rasa/endpoints.yml \
+    --endpoints rasa/endpoints_processed.yml \
     --credentials rasa/credentials.yml
