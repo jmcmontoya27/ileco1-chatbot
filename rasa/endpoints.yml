@@ -3,4 +3,4 @@ action_endpoint:
 
 tracker_store:
   type: sql
-  url: "postgresql://postgres:GRgKVYkJXpcyDmXwAkacuZIolOqYVXSQ@postgres.railway.internal:5432/railway"
+  url: "${DATABASE_URL}" 
