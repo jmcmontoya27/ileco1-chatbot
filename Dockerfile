@@ -18,13 +18,15 @@ RUN apt-get update && apt-get install -y \
     gettext-base \
     && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip only
-RUN pip install --upgrade pip
+# Upgrade pip, setuptools, and wheel, then install Cython
+# This prevents PyYAML build issues
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install "Cython<3.0.0"
 
 # Copy requirements
 COPY requirements.txt .
 
-# Let pip resolve all dependencies automatically
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application files
