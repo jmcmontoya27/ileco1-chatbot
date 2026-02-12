@@ -1,3 +1,4 @@
+# Dependencies last updated: 2026-02-12 - CACHE BUST
 # Core Rasa dependencies
 rasa==3.6.20
 rasa-sdk==3.6.2
