@@ -55,10 +55,4 @@ echo "✓ Actions server started successfully on port $ACTION_SERVER_PORT (PID: 
 
 # Start Rasa Server with minimal memory footprint
 echo "Starting Rasa Server on port $PORT..."
-exec rasa run \
-    --port $PORT \
-    --enable-api \
-    --cors "*" \
-    --endpoints endpoints.yml \
-    --credentials credentials.yml \
-    --log-level WARNING
+exec rasa run --port $PORT --enable-api --cors "*" --endpoints endpoints.yml --credentials credentials.yml
