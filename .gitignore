@@ -25,7 +25,7 @@ rasa.db-wal
 
 # Training artifacts
 results/
-*.tar.gz
+# *.tar.gz  ← COMMENTED OUT to allow model files
 
 # Environment variables
 .env
