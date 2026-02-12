@@ -2,34 +2,49 @@
 set -e
 
 echo "========================================"
-echo "MINIMAL TEST MODE - ILECO-1 Chatbot"
-echo "========================================"
-echo "Main App Port: 5000"
-echo "Action Server Port: 5055"
-echo "Working Directory: $(pwd)"
+echo "ILECO-1 Chatbot Starting..."
 echo "========================================"
 
-# Start Rasa Actions Server in the background
-echo "Starting Rasa Actions Server on port 5055..."
-rasa run actions --port 5055 &
+# Start Rasa Actions Server in background
+echo "Starting Actions Server..."
+rasa run actions --port 5055 > /tmp/actions.log 2>&1 &
 ACTION_PID=$!
 
-# Wait for actions server to be ready
-echo "Waiting for actions server to initialize..."
-sleep 10
+# Wait for actions server
+sleep 8
 
-# Check if actions server is running
-if ! kill -0 $ACTION_PID 2>/dev/null; then
-    echo "ERROR: Actions server failed to start"
-    exit 1
-fi
-
-echo "✓ Actions server started successfully on port 5055 (PID: $ACTION_PID)"
-
-# Start Rasa Server on port 5000
-echo "Starting Rasa Server on port 5000..."
-exec rasa run \
+# Start Rasa Server in background
+echo "Starting Rasa Server (this takes 2-3 minutes)..."
+rasa run \
     --enable-api \
     --cors "*" \
     --port 5000 \
-    --debug
+    --debug > /tmp/rasa.log 2>&1 &
+RASA_PID=$!
+
+# Wait for Rasa to be ready
+echo "Waiting for Rasa to become ready..."
+for i in {1..180}; do
+    if curl -s http://localhost:5000/ > /dev/null 2>&1; then
+        echo "✓ Rasa server is ready!"
+        break
+    fi
+    if [ $i -eq 180 ]; then
+        echo "ERROR: Rasa failed to start after 3 minutes"
+        cat /tmp/rasa.log
+        exit 1
+    fi
+    sleep 1
+    if [ $((i % 10)) -eq 0 ]; then
+        echo "Still waiting... ($i seconds)"
+    fi
+done
+
+# Keep the container running by tailing logs
+echo "========================================"
+echo "Server is UP and ready for requests!"
+echo "Actions Server: http://0.0.0.0:5055"
+echo "Rasa Server: http://0.0.0.0:5000"
+echo "========================================"
+
+tail -f /tmp/rasa.log /tmp/actions.log
