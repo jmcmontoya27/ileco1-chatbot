@@ -2,50 +2,48 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Set environment variables
+# Aggressive memory optimization
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+    PYTHONOPTIMIZE=2 \
+    TF_CPP_MIN_LOG_LEVEL=3 \
+    OMP_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1 \
+    OPENBLAS_NUM_THREADS=1 \
+    NUMEXPR_NUM_THREADS=1
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Minimal system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
-    make \
-    curl \
-    git \
     gettext-base \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip, setuptools, and wheel, then install Cython
-# This prevents PyYAML build issues
-RUN pip install --upgrade pip setuptools wheel && \
-    pip install "Cython<3.0.0"
-
-# Copy requirements
+# Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies with no cache
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Copy application files
-COPY . .
+# Clean up build artifacts to save space
+RUN find /usr/local -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true && \
+    find /usr/local -type f -name '*.pyc' -delete 2>/dev/null || true && \
+    find /usr/local -type f -name '*.pyo' -delete 2>/dev/null || true
 
-# Train model if needed
-RUN if [ ! "$(ls -A models 2>/dev/null)" ]; then \
-        echo "Training new model..."; \
-        rasa train --domain rasa/domain.yml \
-                    --config rasa/config.yml \
-                    --data rasa/data \
-                    --out models; \
-    else \
-        echo "Using existing model"; \
-    fi
+# Copy application files (now in root)
+COPY config.yml domain.yml credentials.yml endpoints.yml /app/
+COPY data /app/data
+COPY models /app/models
+COPY actions /app/actions
+COPY start.sh /app/start.sh
 
 # Make start script executable
-RUN chmod +x start.sh
+RUN chmod +x /app/start.sh
 
+# Expose ports
 EXPOSE 5000 5055
 
+# Run the application
 CMD ["./start.sh"]

@@ -1,8 +1,15 @@
-PyYAML>=5.4.1,<7.0.0
+# Core Rasa dependencies
 rasa==3.6.20
 rasa-sdk==3.6.2
+
+# Database and environment
 psycopg2-binary==2.9.9
 python-dotenv==1.0.0
+
+# HTTP requests
 requests==2.31.0
+
+# Build dependencies
 Cython<3.0.0
 setuptools<70
+PyYAML>=5.4.1,<7.0.0

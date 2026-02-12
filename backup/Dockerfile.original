@@ -1,0 +1,42 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Aggressive memory optimization
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONOPTIMIZE=2 \
+    TF_CPP_MIN_LOG_LEVEL=3 \
+    OMP_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1 \
+    OPENBLAS_NUM_THREADS=1
+
+# Minimal system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install minimal dependencies
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir "Cython<3.0.0"
+
+# Copy and install requirements
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Clean up to save memory
+RUN find /usr/local -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true && \
+    find /usr/local -type f -name '*.pyc' -delete 2>/dev/null || true && \
+    find /usr/local -type f -name '*.pyo' -delete 2>/dev/null || true
+
+# Copy only essential files
+COPY rasa /app/rasa
+COPY models /app/models
+COPY actions /app/actions
+COPY start_minimal.sh /app/start.sh
+
+RUN chmod +x /app/start.sh
+
+EXPOSE 5000 5055
+
+CMD ["./start.sh"]
