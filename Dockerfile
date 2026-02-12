@@ -20,11 +20,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
+# Copy requirements first
 COPY requirements.txt .
 
-# Install dependencies with no cache
+# Cache bust argument - forces pip to re-run when changed
+ARG CACHEBUST=1
+
+# Install dependencies - pinned versions for Rasa 3.6.20 compatibility
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir tensorflow==2.12.0 && \
+    pip install --no-cache-dir SQLAlchemy==1.4.49 && \
     pip install --no-cache-dir -r requirements.txt
 
 # Clean up build artifacts to save space
@@ -32,7 +37,7 @@ RUN find /usr/local -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || t
     find /usr/local -type f -name '*.pyc' -delete 2>/dev/null || true && \
     find /usr/local -type f -name '*.pyo' -delete 2>/dev/null || true
 
-# Copy application files (now in root)
+# Copy application files
 COPY config.yml domain.yml credentials.yml endpoints.yml /app/
 COPY data /app/data
 COPY models /app/models
