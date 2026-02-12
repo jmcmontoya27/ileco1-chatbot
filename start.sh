@@ -61,4 +61,4 @@ exec rasa run \
     --cors "*" \
     --endpoints endpoints.yml \
     --credentials credentials.yml \
-    --log-level warning
+    --log-level WARNING
