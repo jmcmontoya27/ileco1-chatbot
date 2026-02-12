@@ -1,4 +1,4 @@
-# CACHE BUST 2026-02-12-v2
+# CACHE BUST 2026-02-12-v3
 rasa==3.6.20
 rasa-sdk==3.6.2
 tensorflow==2.12.0
@@ -10,3 +10,4 @@ requests==2.31.0
 Cython<3.0.0
 setuptools<70
 PyYAML>=5.4.1,<7.0.0
+EOF
